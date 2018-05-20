@@ -33,6 +33,9 @@ typedef uint32_t                u32;
 // Data direction register for drive pattern output
 #define DRIVE_DDR               DDRD
 
+// Disable all drive pattern
+#define DISABLE_DRIVE           (DRIVE_PORT = 0x00)
+
 // Port pin connected to phase U, high side enable switch
 #define UH                      PD0
 // Port pin connected to phase U, low side enable switch
@@ -57,6 +60,9 @@ typedef uint32_t                u32;
 #define CCW                     1
 // Direction of rotation. Set to either CW or CCW for clockwise and counterclockwise respectively
 #define DIRECTION_OF_ROTATION   CCW
+
+// Number of steps necessary for full engine rotation
+#define NUMBER_OF_STEPS         6
 
 // Drive pattern for commutation step 1
 #define DRIVE_STEP_1            ((1 << UH)|(1 << VL))
@@ -97,12 +103,6 @@ typedef uint32_t                u32;
     ADC SETTINGS
  */
 
-// "ADC Free Running Select" bit in ADCSRA register.
-// Some AVR microcontrollers have "ADFR" bit, some "ADATE".
-// Uncomment needed line.
-#define ADC_ADFR                ADFR
-// #define ADC_ADFR             ADATE
-
 // ADC multiplexer selection for channel U sampling.
 #define ADC_MUX_U               0x00
 // ADC multiplexer selection for channel V sampling.
@@ -114,6 +114,20 @@ typedef uint32_t                u32;
 // ADC multiplexer selection for channel "potenciometer" sampling.
 #define ADC_MUX_RES             0x04
 
+
+// "ADC Free Running Select" bit in ADCSRA register.
+// Some AVR microcontrollers have "ADFR" bit, some "ADATE".
+// Uncomment needed line.
+#define ADC_ADFR                ADFR
+// #define ADC_ADFR             ADATE
+
+// When this bit is set the ADC operates in Free Running mode.
+// In this mode, the ADC samples and updates the Data Registers continuously.
+#define ADC_ADFR_MODE           (1 << ADC_ADFR)
+
+// Enable ADC interrupt
+#define ADC_INTERRUPT_EN        (1 << ADIE)
+
 // REF settings
 #define ADC_ADMUX_REF           ((0 << REFS1)|(1 << REFS0))
 
@@ -121,8 +135,15 @@ typedef uint32_t                u32;
 // Prescaler = 8
 #define ADC_PRESCALER           ((0 << ADPS2)|(1 << ADPS1)|(1 << ADPS0))
 
-// ADC starting conversion macros
+// In "Single Conversion" mode, this macro start each ADC conversion.
+// In "Free Running" mode, this macro start the first ADC conversion.
 #define ADC_START_CONV          (ADCSRA |= (1 << ADSC))
+
+// The macro that waiting until ADC conversion completed
+#define ADC_WAIT_CONV           ((ADCSRA & (1 << ADIF)) == 0)
+
+// The macro that generate ADC interrupt after conversion complete
+#define ADC_INTERRUPT_GEN       (ADCSRA |= (1 << ADIF))
 
 /*
     PWM SETTINGS
@@ -139,10 +160,8 @@ typedef uint32_t                u32;
 
 
 /*
-    TIMER/COUNTER SETTINGS
+    TIMER/COUNTER REGISTERS
  */
-
-// TIMER/COUNTER REGISTERS
 
 // Timer/Counter Control Register
 #define TCCR                    TCCR2
@@ -161,8 +180,9 @@ typedef uint32_t                u32;
 // Timer/Counter Interrupt Flag Register
 #define TimerInterruptFlag      TIFR
 
-
-// TIMER/COUNTER SETTINGS
+/*
+    TIMER/COUNTER SETTINGS
+ */
 
 // Waveform Generation Mode
 // Using "PWM, Phase correct" mode
