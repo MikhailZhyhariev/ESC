@@ -78,7 +78,7 @@ typedef uint32_t                u32;
 #define DRIVE_STEP_6            ((1 << WH)|(1 << VL))
 
 #if DIRECTION_OF_ROTATION
-    // Commutation order CCW array
+    // An array of the commutation order CCW rotation
     #define DRIVE_STEP_ORDER    {\
         DRIVE_STEP_1, \
         DRIVE_STEP_2, \
@@ -88,7 +88,7 @@ typedef uint32_t                u32;
         DRIVE_STEP_6, \
     }
 #else
-    // Commutation order CW array
+    // An array of the commutation order CW rotation
     #define DRIVE_STEP_ORDER    {\
         DRIVE_STEP_6, \
         DRIVE_STEP_5, \
@@ -111,8 +111,32 @@ typedef uint32_t                u32;
 #define ADC_MUX_W               0x02
 // ADC multiplexer selection for channel "engine voltage" sampling.
 #define ADC_MUX_EV              0x03
+
 // ADC multiplexer selection for channel "potenciometer" sampling.
 #define ADC_MUX_RES             0x04
+
+// ВОТ ТУТ ПОСМОТРЕТЬ И ЧТО-ТО ПРИДУМАТЬ
+#if DIRECTION_OF_ROTATION
+    // An array of the ADC Mux order CW rotation
+    #define ADC_MUX_ARRAY           { \
+        ADC_MUX_U, \
+        ADC_MUX_V, \
+        ADC_MUX_W, \
+        ADC_MUX_U, \
+        ADC_MUX_V, \
+        ADC_MUX_W  \
+    }
+#else
+    // An array of the ADC Mux order CCW rotation
+    #define ADC_MUX_ARRAY           { \
+        ADC_MUX_W, \
+        ADC_MUX_V, \
+        ADC_MUX_U, \
+        ADC_MUX_W, \
+        ADC_MUX_V, \
+        ADC_MUX_U  \
+    }
+#endif
 
 
 // "ADC Free Running Select" bit in ADCSRA register.
@@ -144,20 +168,6 @@ typedef uint32_t                u32;
 
 // The macro that generate ADC interrupt after conversion complete
 #define ADC_INTERRUPT_GEN       (ADCSRA |= (1 << ADIF))
-
-/*
-    PWM SETTINGS
- */
-
-// System clock frequency [Hz]. Used to calculate PWM TOP value
-#define SYSTEM_FREQUENCY        1000000
-
-// PWM base frequency [Hz]. Used to calculate PWM TOP value
-#define PWM_BASE_FREQUENCY      16000
-
-// OCR Top value
-#define PWM_TOP_VALUE           (SYSTEM_FREQUENCY / PWM_BASE_FREQUENCY / 2)
-
 
 /*
     TIMER/COUNTER REGISTERS
@@ -198,12 +208,31 @@ typedef uint32_t                u32;
 
 
 /*
+    PWM SETTINGS
+ */
+
+// System clock frequency [Hz]. Used to calculate PWM TOP value
+#define SYSTEM_FREQUENCY        8000000
+
+// PWM base frequency [Hz]. Used to calculate PWM TOP value
+#define PWM_BASE_FREQUENCY      16000
+
+// OCR Top value
+#define PWM_TOP_VALUE           (SYSTEM_FREQUENCY / PWM_BASE_FREQUENCY / 2)
+
+// Setting PWM compare value
+#define SET_PWM_COMPARE(x)      (OCR = x)
+
+// Setting max PWM compare value
+#define SET_PWM_COMPARE_MAX     (OCR = PWM_TOP_VALUE)
+
+/*
     FUNCTIONS
  */
 
 void ESC_Init();
 
-void ADC_readValue(u8 channel);
+u16 ADC_readValue(u8 channel);
 
 
 /*
