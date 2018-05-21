@@ -59,7 +59,7 @@ typedef uint32_t                u32;
 // Counterclockwise rotation flag
 #define CCW                     1
 // Direction of rotation. Set to either CW or CCW for clockwise and counterclockwise respectively
-#define DIRECTION_OF_ROTATION   CCW
+#define DIRECTION_OF_ROTATION   CW
 
 // Number of steps necessary for full engine rotation
 #define NUMBER_OF_STEPS         6
@@ -233,6 +233,8 @@ typedef uint32_t                u32;
 void ESC_Init();
 
 u16 ADC_readValue(u8 channel);
+
+u8 ESC_getEnginePosition(void);
 
 
 /*

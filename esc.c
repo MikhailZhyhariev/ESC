@@ -45,7 +45,7 @@ u16 ADC_readValue(u8 channel) {
     return ADC;
 }
 
-unsigned char ESC_getEnginePosition(void) {
+u8 ESC_getEnginePosition(void) {
     // An array for a result of ADC measurements
     u16 V[NUMBER_OF_STEPS];
     // An array ADC mux values
