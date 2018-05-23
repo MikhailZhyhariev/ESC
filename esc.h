@@ -99,6 +99,7 @@ typedef uint32_t                u32;
     }
 #endif
 
+
 /*
     ADC SETTINGS
  */
@@ -225,6 +226,9 @@ typedef uint32_t                u32;
 
 // Setting max PWM compare value
 #define SET_PWM_COMPARE_MAX     (OCR = PWM_TOP_VALUE)
+
+// PWM compare value used during startup.
+#define STARTUP_PWM_VALUE       130
 
 /*
     FUNCTIONS

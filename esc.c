@@ -52,17 +52,15 @@ u8 ESC_getEnginePosition(void) {
     u8 M[NUMBER_OF_STEPS] = ADC_MUX_ARRAY;
 
     DISABLE_DRIVE;
-    SET_PWM_COMPARE_MAX;
+    SET_PWM_COMPARE(STARTUP_PWM_VALUE);
 
     // Commutating and measuring voltage for each drive
     for (u8 i = 0; i < NUMBER_OF_STEPS; i++) {
-        cli();
         // Commutating motor drivers
         DRIVE_PORT = commutation_order[i];
         // Getting ADC value from free motor drive
         V[i] = ADC_readValue(M[i]);
         DISABLE_DRIVE;
-        sei();
         _delay_us(10);
     }
 
