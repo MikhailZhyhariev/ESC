@@ -228,7 +228,7 @@ typedef uint32_t                u32;
 #define SET_PWM_COMPARE_MAX     (OCR = PWM_TOP_VALUE)
 
 // PWM compare value used during startup.
-#define STARTUP_PWM_VALUE       130
+#define STARTUP_PWM_VALUE       100
 
 /*
     FUNCTIONS
