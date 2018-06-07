@@ -59,7 +59,7 @@ typedef uint32_t                u32;
 // Counterclockwise rotation flag
 #define CCW                     1
 // Direction of rotation. Set to either CW or CCW for clockwise and counterclockwise respectively
-#define DIRECTION_OF_ROTATION   CW
+#define DIRECTION_OF_ROTATION   CCW
 
 // Number of steps necessary for full engine rotation
 #define NUMBER_OF_STEPS         6
@@ -228,7 +228,7 @@ typedef uint32_t                u32;
 #define SET_PWM_COMPARE_MAX     (OCR = PWM_TOP_VALUE)
 
 // PWM compare value used during startup.
-#define STARTUP_PWM_VALUE       100
+#define STARTUP_PWM_VALUE       130
 
 /*
     FUNCTIONS
