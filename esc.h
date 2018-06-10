@@ -8,6 +8,7 @@
 
 #include <avr/io.h>
 #include <stdint.h>
+#include <util/delay.h>
 
 /*
     CUSTOM VARIABLES TYPES
@@ -98,7 +99,6 @@ typedef uint32_t                u32;
         DRIVE_STEP_1, \
     }
 #endif
-
 
 /*
     ADC SETTINGS
@@ -231,12 +231,26 @@ typedef uint32_t                u32;
 #define STARTUP_PWM_VALUE       130
 
 /*
+    CUSTOM DELAYS FUNCTIONS
+ */
+
+// Delay function that avoid "__buitin_avr_delays_cycles" error
+#define DELAY_CYCLE(x, func) {for (u16 i = 0; i < x; i++) func(1);}
+
+// Custom MICROSECONDS delay
+#define DELAY_US(x) (DELAY_CYCLE(x, _delay_us))
+
+// Custom MILLISECONDS delay
+#define DELAY_MS(x) (DELAY_CYCLE(x, _delay_ms))
+
+
+/*
     FUNCTIONS
  */
 
 void ESC_Init();
 
-u16 ADC_readValue(u8 channel);
+u16 ESC_readADCValue(u8 channel);
 
 u8 ESC_getEnginePosition(void);
 

@@ -32,7 +32,7 @@ void ESC_Init(void) {
     TimerInterruptMask |= (1 << TOIE2);
 }
 
-u16 ADC_readValue(u8 channel) {
+u16 ESC_readADCValue(u8 channel) {
     // Change ADMUX register value
     ADMUX |= channel;
     // Waiting for voltage stabilization
@@ -51,19 +51,20 @@ u8 ESC_getEnginePosition(void) {
     // An array ADC mux values
     u8 M[NUMBER_OF_STEPS] = ADC_MUX_ARRAY;
 
+    int delays[NUMBER_OF_STEPS] = {800, 400, 200, 160, 140, 120};
+
     DISABLE_DRIVE;
     SET_PWM_COMPARE(STARTUP_PWM_VALUE);
 
     // Commutating and measuring voltage for each drive
     for (u8 i = 0; i < NUMBER_OF_STEPS; i++) {
-        cli();
         // Commutating motor drivers
         DRIVE_PORT = commutation_order[i];
         // Getting ADC value from free motor drive
-        V[i] = ADC_readValue(M[i]);
+        V[i] = ESC_readADCValue(M[i]);
+        // Waiting until ADC ending measured
+        DELAY_US(delays[i]);
         DISABLE_DRIVE;
-        _delay_us(10);
-        sei();
     }
 
     // Calculation the functions that determine rotor position
@@ -95,5 +96,5 @@ u8 ESC_getEnginePosition(void) {
 }
 
 
-ISR(ADC_vect) {
-}
+// ISR(ADC_vect) {
+// }
