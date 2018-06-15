@@ -46,12 +46,12 @@ u16 ESC_readADCValue(u8 channel) {
 }
 
 u8 ESC_getEnginePosition(void) {
-    // An array for a result of ADC measurements
+    // An array for result of ADC measurements
     u16 V[NUMBER_OF_STEPS];
     // An array ADC mux values
     u8 M[NUMBER_OF_STEPS] = ADC_MUX_ARRAY;
-
-    int delays[NUMBER_OF_STEPS] = {800, 400, 200, 160, 140, 120};
+    // An array of delays that using after ADC measurement
+    u16 delays[NUMBER_OF_STEPS] = {800, 400, 200, 160, 140, 120};
 
     DISABLE_DRIVE;
     SET_PWM_COMPARE(STARTUP_PWM_VALUE);
@@ -95,6 +95,8 @@ u8 ESC_getEnginePosition(void) {
     return 0;
 }
 
+// ISR(TIMER2_OVF_vect) {
+// }
 
 // ISR(ADC_vect) {
 // }

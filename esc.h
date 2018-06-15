@@ -192,6 +192,27 @@ typedef uint32_t                u32;
 #define TimerInterruptFlag      TIFR
 
 /*
+    TIMER/COUNTER REGISTERS
+ */
+
+// Timer/Counter Control Register
+#define TCCR                    TCCR2
+// Timer/Counter Register
+#define TCNT                    TCNT2
+
+// Output Compare Register
+#define OCR                     OCR2
+// OCR data direction
+#define OCR_DDR                 DDRB
+// OCR pin
+#define OCR_PIN                 PB3
+
+// Timer/Counter Interrupt Mask Register
+#define TimerInterruptMask      TIMSK
+// Timer/Counter Interrupt Flag Register
+#define TimerInterruptFlag      TIFR
+
+/*
     TIMER/COUNTER SETTINGS
  */
 
@@ -235,14 +256,20 @@ typedef uint32_t                u32;
  */
 
 // Delay function that avoid "__buitin_avr_delays_cycles" error
-#define DELAY_CYCLE(x, func) {for (u16 i = 0; i < x; i++) func(1);}
+#define DELAY_CYCLE(x, func)    {for (u16 i = 0; i < x; i++) func(1);}
 
 // Custom MICROSECONDS delay
-#define DELAY_US(x) (DELAY_CYCLE(x, _delay_us))
+#define DELAY_US(x)             (DELAY_CYCLE(x, _delay_us))
 
 // Custom MILLISECONDS delay
-#define DELAY_MS(x) (DELAY_CYCLE(x, _delay_ms))
+#define DELAY_MS(x)             (DELAY_CYCLE(x, _delay_ms))
 
+/*
+    BOOLEAN CONSTANTS
+ */
+
+#define TRUE                    0
+#define FALSE                   !TRUE
 
 /*
     FUNCTIONS
