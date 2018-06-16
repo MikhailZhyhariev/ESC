@@ -172,27 +172,7 @@ typedef uint32_t                u32;
 
 /*
     TIMER/COUNTER REGISTERS
- */
-
-// Timer/Counter Control Register
-#define TCCR                    TCCR2
-// Timer/Counter Register
-#define TCNT                    TCNT2
-
-// Output Compare Register
-#define OCR                     OCR2
-// OCR data direction
-#define OCR_DDR                 DDRB
-// OCR pin
-#define OCR_PIN                 PB3
-
-// Timer/Counter Interrupt Mask Register
-#define TimerInterruptMask      TIMSK
-// Timer/Counter Interrupt Flag Register
-#define TimerInterruptFlag      TIFR
-
-/*
-    TIMER/COUNTER REGISTERS
+    (Contains macros for PWM signal)
  */
 
 // Timer/Counter Control Register
@@ -228,6 +208,18 @@ typedef uint32_t                u32;
 // Using "no prescaler" mode
 #define TimerPrescaler          ((0 << CS22)|(0 << CS21)|(1 << CS20))
 
+/*
+    TIMER/COUNTER REGISTERS
+    (Contains macros for detect zero capture)
+ */
+
+// Timer/Counter Control Register
+#define ZeroCaptCtl             TCCR1
+// Timer/Counter Register
+#define ZeroCaptReg             TCNT1
+// Timer/Counter prescaler
+// Using "no prescaler" mode
+#define ZeroCaptPrescaler       ((0 << CS12)|(0 << CS11)|(1 << CS10))
 
 /*
     PWM SETTINGS
