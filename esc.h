@@ -14,6 +14,7 @@
     CUSTOM VARIABLES TYPES
  */
 
+
 // Signed custom variables types
 typedef int8_t                  s8;
 typedef int16_t                 s16;
@@ -113,9 +114,6 @@ typedef uint32_t                u32;
 // ADC multiplexer selection for channel "engine voltage" sampling.
 #define ADC_MUX_EV              0x03
 
-// ADC multiplexer selection for channel "potenciometer" sampling.
-#define ADC_MUX_RES             0x04
-
 // ВОТ ТУТ ПОСМОТРЕТЬ И ЧТО-ТО ПРИДУМАТЬ
 #if DIRECTION_OF_ROTATION
     // An array of the ADC Mux order CW rotation
@@ -170,22 +168,24 @@ typedef uint32_t                u32;
 // The macro that generate ADC interrupt after conversion complete
 #define ADC_INTERRUPT_GEN       (ADCSRA |= (1 << ADIF))
 
+
 /*
     TIMER/COUNTER REGISTERS
     (Contains macros for PWM signal)
  */
 
+
 // Timer/Counter Control Register
-#define TCCR                    TCCR2
+#define PWM_TCCR                TCCR2
 // Timer/Counter Register
-#define TCNT                    TCNT2
+#define PWM_TCNT                TCNT2
 
 // Output Compare Register
-#define OCR                     OCR2
+#define PWM_OCR                 OCR2
 // OCR data direction
-#define OCR_DDR                 DDRB
+#define PWM_OCR_DDR             DDRB
 // OCR pin
-#define OCR_PIN                 PB3
+#define PWM_OCR_PIN             PB3
 
 // Timer/Counter Interrupt Mask Register
 #define TimerInterruptMask      TIMSK
@@ -194,36 +194,62 @@ typedef uint32_t                u32;
 
 /*
     TIMER/COUNTER SETTINGS
+    (Contains macros for PWM signal)
  */
 
-// Waveform Generation Mode
+// PWM waveform Generation Mode
 // Using "PWM, Phase correct" mode
-#define WfmGenMode              ((0 << WGM21)|(1 << WGM20))
+#define PWM_WfmGenMode          ((0 << WGM21)|(1 << WGM20))
 
-// Compare Match Output Mode
+// PWM compare Match Output Mode
 // Clear OC2 on Compare Match when up-counting. Set OC2 on Compare Match when downcounting
-#define ComMatchmode            ((1 << COM21)|(0 << COM20))
+#define PWM_ComMatchmode        ((1 << COM21)|(0 << COM20))
 
-// Timer/Counter prescaler
+// PWM Timer/Counter prescaler
 // Using "no prescaler" mode
-#define TimerPrescaler          ((0 << CS22)|(0 << CS21)|(1 << CS20))
+#define PWM_TimerPrescaler      ((0 << CS22)|(0 << CS21)|(1 << CS20))
+
+// PWM Timer/counter interrupt enable
+#define PWM_Interrupt           ((1 << TOIE2))
+
 
 /*
     TIMER/COUNTER REGISTERS
-    (Contains macros for detect zero capture)
+    (Contains macros for detect ZERO CAPTURE)
  */
 
-// Timer/Counter Control Register
-#define ZeroCaptCtl             TCCR1
-// Timer/Counter Register
-#define ZeroCaptReg             TCNT1
-// Timer/Counter prescaler
+
+// Zero capture Timer/Counter Control Registers
+#define CAPT_TCCR_A             TCCR1A
+#define CAPT_TCCR_B             TCCR1B
+
+// Zero capture Timer/Counter Register
+#define CAPT_TCNT1              TCNT1
+
+// Zero capture output Compare Registers
+#define CAPT_OCR_A              OCR1A
+#define CAPT_OCR_B              OCR1B
+
+
+/*
+    TIMER/COUNTER SETTINGS
+    (Contains macros for detect ZERO CAPTURE)
+ */
+
+
+// Zero capture Timer/Counter prescaler
 // Using "no prescaler" mode
-#define ZeroCaptPrescaler       ((0 << CS12)|(0 << CS11)|(1 << CS10))
+#define CAPT_Prescaler          ((0 << CS12)|(0 << CS11)|(1 << CS10))
+
+// Zero capture Timer/counter interrupts enable
+#define CAPT_Interrupt_A        ((1 << OCIE1A))
+#define CAPT_Interrupt_B        ((1 << OCIE1B))
+
 
 /*
     PWM SETTINGS
  */
+
 
 // System clock frequency [Hz]. Used to calculate PWM TOP value
 #define SYSTEM_FREQUENCY        8000000
@@ -235,10 +261,10 @@ typedef uint32_t                u32;
 #define PWM_TOP_VALUE           (SYSTEM_FREQUENCY / PWM_BASE_FREQUENCY / 2)
 
 // Setting PWM compare value
-#define SET_PWM_COMPARE(x)      (OCR = x)
+#define SET_PWM_COMPARE(x)      (PWM_OCR = x)
 
 // Setting max PWM compare value
-#define SET_PWM_COMPARE_MAX     (OCR = PWM_TOP_VALUE)
+#define SET_PWM_COMPARE_MAX     (PWM_OCR = PWM_TOP_VALUE)
 
 // PWM compare value used during startup.
 #define STARTUP_PWM_VALUE       130
@@ -256,28 +282,35 @@ typedef uint32_t                u32;
 // Custom MILLISECONDS delay
 #define DELAY_MS(x)             (DELAY_CYCLE(x, _delay_ms))
 
+
 /*
     BOOLEAN CONSTANTS
  */
 
+
 #define TRUE                    0
 #define FALSE                   !TRUE
+
 
 /*
     FUNCTIONS
  */
 
+
 void ESC_Init();
 
 u16 ESC_readADCValue(u8 channel);
 
-u8 ESC_getEnginePosition(void);
+void ESC_getEnginePosition(void);
 
 
 /*
     INTERRUPTS
  */
 
-ISR(ADC_vect);
+
+// ISR(ADC_vect);
+
+ISR(TIMER2_OVF_vect);
 
 #endif
