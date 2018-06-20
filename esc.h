@@ -258,7 +258,8 @@ typedef uint32_t                u32;
 #define PWM_BASE_FREQUENCY      16000
 
 // OCR Top value
-#define PWM_TOP_VALUE           (SYSTEM_FREQUENCY / PWM_BASE_FREQUENCY / 2)
+// #define PWM_TOP_VALUE           (SYSTEM_FREQUENCY / PWM_BASE_FREQUENCY / 2)
+#define PWM_TOP_VALUE           255
 
 // Setting PWM compare value
 #define SET_PWM_COMPARE(x)      (PWM_OCR = x)

@@ -31,15 +31,13 @@ u16 ESC_readADCValue(u8 channel) {
     // Wait until conversion end
     while(ADC_WAIT_CONV);
 
-    ADC_INTERRUPT_GEN;
-
     return ADC;
 }
 
 void ESC_Init(void) {
     // Initialize ADC
     ADMUX |= ADC_ADMUX_REF;
-    ADCSRA |= (1 << ADEN) | ADC_PRESCALER;
+    ADCSRA |= (1 << ADEN) | ADC_PRESCALER | ADC_INTERRUPT_EN;
 
     // Initialize drive DDR and PORT
     DRIVE_DDR |= (1 << UH)|(1 << UL)|(1 << VH)|(1 << VL)|(1 << WH)|(1 << WL);
