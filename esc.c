@@ -61,7 +61,7 @@ void ESC_getEnginePosition(void) {
     // An array for result of ADC measurements
     u16 V[NUMBER_OF_STEPS];
     // An array of delays that using after ADC measurement
-    // u16 delays[NUMBER_OF_STEPS] = {800, 400, 200, 160, 140, 120};
+    u16 delays[NUMBER_OF_STEPS] = {800, 400, 200, 160, 140, 120};
 
     DISABLE_DRIVE;
     SET_PWM_COMPARE(STARTUP_PWM_VALUE);
@@ -74,7 +74,7 @@ void ESC_getEnginePosition(void) {
         V[i] = ESC_readADCValue(mux_order[i]);
         // Waiting until ADC ending measured
 
-        // DELAY_US(delays[i]);
+        DELAY_US(delays[i]);
 
         DELAY_US(400);
 
