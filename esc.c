@@ -109,7 +109,8 @@ void ESC_getEnginePosition(void) {
     // Measuring engine voltage that used as zero capturing value
     zero_capt_value = ESC_readADCValue(ADC_MUX_EV) / 2;
 
-    CAPT_TCNT1 = 0;
+    CAPT_CLEAR;
+    TimerInterruptMask |= CAPT_Interrupt_OVF;
 }
 
 
@@ -118,9 +119,14 @@ ISR(TIMER2_OVF_vect) {
   u16 EMF = ESC_readADCValue(mux_order[commutation_number]);
 
   if (EMF >= 0.85 * zero_capt_value || EMF <= 1.15 * zero_capt_value) {
-    DRIVE_PORT = commutation_order[++commutation_number];
+    TimerInterruptMask |= CAPT_Interrupt_A;
+    CAPT_TCCR_A = CAPT_TCNT;
+    CAPT_CLEAR;
   }
+}
 
+ISR(TIMER1_COMPA_vect) {
+  DRIVE_PORT = commutation_order[++commutation_number];
 }
 
 

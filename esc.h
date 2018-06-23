@@ -175,6 +175,11 @@ typedef uint32_t                u32;
  */
 
 
+// Timer/Counter Interrupt Mask Register
+#define TimerInterruptMask      TIMSK
+// Timer/Counter Interrupt Flag Register
+#define TimerInterruptFlag      TIFR
+
 // Timer/Counter Control Register
 #define PWM_TCCR                TCCR2
 // Timer/Counter Register
@@ -187,15 +192,12 @@ typedef uint32_t                u32;
 // OCR pin
 #define PWM_OCR_PIN             PB3
 
-// Timer/Counter Interrupt Mask Register
-#define TimerInterruptMask      TIMSK
-// Timer/Counter Interrupt Flag Register
-#define TimerInterruptFlag      TIFR
 
 /*
     TIMER/COUNTER SETTINGS
     (Contains macros for PWM signal)
  */
+
 
 // PWM waveform Generation Mode
 // Using "PWM, Phase correct" mode
@@ -224,7 +226,7 @@ typedef uint32_t                u32;
 #define CAPT_TCCR_B             TCCR1B
 
 // Zero capture Timer/Counter Register
-#define CAPT_TCNT1              TCNT1
+#define CAPT_TCNT               TCNT1
 
 // Zero capture output Compare Registers
 #define CAPT_OCR_A              OCR1A
@@ -241,11 +243,13 @@ typedef uint32_t                u32;
 // Using "no prescaler" mode
 #define CAPT_Prescaler          ((0 << CS12)|(0 << CS11)|(1 << CS10))
 
-// Zero capture Timer/counter interrupts enable
+// Zero capture Timer/Counter interrupts enable
+#define CAPT_Interrupt_OVF      ((1 << TOIE1))
 #define CAPT_Interrupt_A        ((1 << OCIE1A))
 #define CAPT_Interrupt_B        ((1 << OCIE1B))
 
-
+// Clear zero capture Timer/Counter
+#define CAPT_CLEAR              ((CAPT_TCNT = 0))
 /*
     PWM SETTINGS
  */
@@ -313,5 +317,6 @@ void ESC_getEnginePosition(void);
 // ISR(ADC_vect);
 
 ISR(TIMER2_OVF_vect);
+ISR(TIMER1_COMPA_vect);
 
 #endif
