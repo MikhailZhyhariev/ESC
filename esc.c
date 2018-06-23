@@ -20,6 +20,9 @@ static u8 commutation_number = 0;
 // Zero capturing value
 static u16 zero_capt_value;
 
+// Zero captured flag
+static u8 zero_captured = FALSE;
+
 
 u16 ESC_readADCValue(u8 channel) {
     // Change ADMUX register value
@@ -53,15 +56,20 @@ void ESC_Init(void) {
     // Initialize timer/counter that used when zero captured
     CAPT_TCCR_B |= PWM_TimerPrescaler;
 
-    // Switch on overflow Timer/Conter2 interrupt
-    TimerInterruptMask |= PWM_Interrupt;
+    // Measuring engine voltage that used as zero capturing value
+    zero_capt_value = ESC_readADCValue(ADC_MUX_EV) / 2;
+
+    // Switch on overflow PWM Timer/Counter and zero capture Timer/counter interrupts
+    PWM_CLEAR;
+    CAPT_CLEAR;
+    TimerInterruptMask |= PWM_Interrupt_OVF | CAPT_Interrupt_OVF;
 }
 
 void ESC_getEnginePosition(void) {
     // An array for result of ADC measurements
     u16 V[NUMBER_OF_STEPS];
     // An array of delays that using after ADC measurement
-    u16 delays[NUMBER_OF_STEPS] = {800, 400, 200, 160, 140, 120};
+    // u16 delays[NUMBER_OF_STEPS] = {800, 400, 200, 160, 140, 120};
 
     DISABLE_DRIVE;
     SET_PWM_COMPARE(STARTUP_PWM_VALUE);
@@ -73,11 +81,7 @@ void ESC_getEnginePosition(void) {
         // Getting ADC value from free motor drive
         V[i] = ESC_readADCValue(mux_order[i]);
         // Waiting until ADC ending measured
-
-        DELAY_US(delays[i]);
-
-        DELAY_US(400);
-
+        // DELAY_US(delays[i]);
         DISABLE_DRIVE;
     }
 
@@ -105,12 +109,6 @@ void ESC_getEnginePosition(void) {
        case 5: commutation_number = 0; break;
        case 6: commutation_number = 2; break;
     }
-
-    // Measuring engine voltage that used as zero capturing value
-    zero_capt_value = ESC_readADCValue(ADC_MUX_EV) / 2;
-
-    CAPT_CLEAR;
-    TimerInterruptMask |= CAPT_Interrupt_OVF;
 }
 
 
@@ -119,16 +117,34 @@ ISR(TIMER2_OVF_vect) {
   u16 EMF = ESC_readADCValue(mux_order[commutation_number]);
 
   if (EMF >= 0.85 * zero_capt_value || EMF <= 1.15 * zero_capt_value) {
-    TimerInterruptMask |= CAPT_Interrupt_A;
-    CAPT_TCCR_A = CAPT_TCNT;
-    CAPT_CLEAR;
+    if (!zero_captured) {
+      TimerInterruptMask |= CAPT_Interrupt_A;
+      CAPT_OCR_A = CAPT_TCNT;
+      CAPT_CLEAR;
+
+      zero_captured = TRUE;
+    } else {
+      TimerInterruptMask |= CAPT_Interrupt_B;
+      CAPT_OCR_B = CAPT_TCNT;
+
+      // Disable PWM Timer/counter overflow interrupt
+      TimerInterruptMask &= ~PWM_Interrupt_OVF;
+    }
   }
 }
 
 ISR(TIMER1_COMPA_vect) {
-  DRIVE_PORT = commutation_order[++commutation_number];
+  commutation_number++;
+  if (commutation_number > NUMBER_OF_STEPS - 1) {
+    commutation_number = 0;
+  }
+
+  PWM_CLEAR;
+  TimerInterruptMask &= ~CAPT_Interrupt_A;
+  DRIVE_PORT = commutation_order[commutation_number];
 }
 
-
-
-// ISR(ADC_vect) {}
+ISR(TIMER1_COMPB_vect) {
+  CAPT_CLEAR;
+  TimerInterruptMask |= CAPT_Interrupt_A;
+}

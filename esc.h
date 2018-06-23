@@ -212,7 +212,10 @@ typedef uint32_t                u32;
 #define PWM_TimerPrescaler      ((0 << CS22)|(0 << CS21)|(1 << CS20))
 
 // PWM Timer/counter interrupt enable
-#define PWM_Interrupt           ((1 << TOIE2))
+#define PWM_Interrupt_OVF       ((1 << TOIE2))
+
+// Clear PWM Timer/Counter
+#define PWM_CLEAR               ((PWM_TCNT = 0))
 
 
 /*
