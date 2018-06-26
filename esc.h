@@ -316,10 +316,10 @@ void ESC_getEnginePosition(void);
     INTERRUPTS
  */
 
-
-// ISR(ADC_vect);
-
 ISR(TIMER2_OVF_vect);
+
 ISR(TIMER1_COMPA_vect);
+
+ISR(TIMER1_COMPB_vect);
 
 #endif
