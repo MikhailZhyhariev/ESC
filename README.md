@@ -10,7 +10,7 @@ Initialize and usage
 
 To initialize, you must use the `ESC_Init`.
 
-You can get motor position use the `ESC_getEnginePosition`.
+You can get start motor position use the `ESC_getEnginePosition`.
 
 Custom variable type
 --------------------
