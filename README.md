@@ -30,3 +30,14 @@ typedef uint8_t     u8;
 typedef uint16_t    u16;
 typedef uint32_t    u32;
 ```
+
+Interrupts
+----------
+
+Library use three interrupts:
+
+1) 8-bit timer/counter overflow (`OVF`) interrupt. It used to zero point detection.
+
+2) 16-bit timer/counter compare (`COMPA`) interrupt. It used to switch commutation state.
+
+3) 16-bit timer/counter compare (`COMPB`) interrupt. It used to switch on `COMPA` timer/counter interrupt.
