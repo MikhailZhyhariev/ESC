@@ -23,7 +23,11 @@ static u16 zero_capt_value;
 // Zero captured flag
 static u8 zero_captured = FALSE;
 
-
+/**
+ * Reading ADC value
+ * @param  channel - ADC channel
+ * @return         measured value
+ */
 u16 ESC_readADCValue(u8 channel) {
     // Change ADMUX register value
     ADMUX = channel | (ADMUX & 0xF0);
@@ -37,6 +41,9 @@ u16 ESC_readADCValue(u8 channel) {
     return ADC;
 }
 
+/**
+ * Init function. Initialize ADC, Drive and PORT, Timers
+ */
 void ESC_Init(void) {
     // Initialize ADC
     ADMUX |= ADC_ADMUX_REF;
@@ -65,6 +72,9 @@ void ESC_Init(void) {
     TimerInterruptMask |= PWM_Interrupt_OVF | CAPT_Interrupt_OVF;
 }
 
+/**
+ * Getting starting rotor position
+ */
 void ESC_getEnginePosition(void) {
     // An array for result of ADC measurements
     u16 V[NUMBER_OF_STEPS];
@@ -111,7 +121,9 @@ void ESC_getEnginePosition(void) {
     }
 }
 
-
+/**
+ * Used to zero point detection
+ */
 ISR(TIMER2_OVF_vect) {
   // back EMF value
   u16 EMF = ESC_readADCValue(mux_order[commutation_number]);
@@ -133,6 +145,9 @@ ISR(TIMER2_OVF_vect) {
   }
 }
 
+/**
+ * Used to switch commutation state.
+ */
 ISR(TIMER1_COMPA_vect) {
   commutation_number++;
   if (commutation_number > NUMBER_OF_STEPS - 1) {
@@ -144,6 +159,9 @@ ISR(TIMER1_COMPA_vect) {
   DRIVE_PORT = commutation_order[commutation_number];
 }
 
+/**
+ * Used to switch on `COMPA` timer/counter interrupt.
+ */
 ISR(TIMER1_COMPB_vect) {
   CAPT_CLEAR;
   TimerInterruptMask |= CAPT_Interrupt_A;

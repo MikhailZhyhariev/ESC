@@ -304,11 +304,21 @@ typedef uint32_t                u32;
     FUNCTIONS
  */
 
-
+/**
+ * Init function. Initialize ADC, Drive and PORT, Timers
+ */
 void ESC_Init();
 
+/**
+ * Reading ADC value
+ * @param  channel - ADC channel
+ * @return         measured value
+ */
 u16 ESC_readADCValue(u8 channel);
 
+/**
+ * Getting starting rotor position
+ */
 void ESC_getEnginePosition(void);
 
 
@@ -316,10 +326,19 @@ void ESC_getEnginePosition(void);
     INTERRUPTS
  */
 
+/**
+ * Used to zero point detection
+ */
 ISR(TIMER2_OVF_vect);
 
+/**
+ * Used to switch commutation state.
+ */
 ISR(TIMER1_COMPA_vect);
 
+/**
+ * Used to switch on `COMPA` timer/counter interrupt.
+ */
 ISR(TIMER1_COMPB_vect);
 
 #endif
